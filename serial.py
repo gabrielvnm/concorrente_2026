@@ -1,7 +1,6 @@
 import os
 import time
 
-# objeto com os atributos do arquivo
 class Linha:
     def __init__(self, sigla_tribunal,procedimento,ramo_justica,sigla_grau,uf_oj,municipio_oj,id_ultimo_oj,nome,mesano_cnm1,mesano_sent,casos_novos_2026,julgados_2026,prim_sent2026,suspensos_2026,dessobrestados_2026,cumprimento_meta1,distm2_a,julgm2_a,suspm2_a,cumprimento_meta2a,distm2_ant,julgm2_ant,suspm2_ant,desom2_ant,cumprimento_meta2ant,distm4_a,julgm4_a,suspm4_a,cumprimento_meta4a,distm4_b,julgm4_b,suspm4_b,cumprimento_meta4b):
         self.sigla_tribunal = sigla_tribunal 
@@ -57,7 +56,7 @@ class Linha:
 
     def __repr__(self):
         return self.__str__()
-#objeto pra calcular as metas por sigla do tribunal
+
 class Meta_tribunal:
     def __init__(self, sigla_tribunal, meta1, meta2a, meta2ant, meta4a, meta4b):
         self.sigla_tribunal = sigla_tribunal
@@ -67,7 +66,7 @@ class Meta_tribunal:
         self.meta4a = meta4a
         self.meta4b = meta4b
 
-# Funçao abrir um arquivo e salvar na memoria como um objeto
+# Funçao abrir um arquivo
 def abrir_arquivo(nome_arquivo):
     linhas = []
     with open(nome_arquivo, 'r', encoding='utf-8') as file:
@@ -180,11 +179,10 @@ def concatenar_arquivos():
 def escrever_arquivo_inteiro(linhas):
     with open('lista_completa.csv', 'a', encoding='utf-8') as file:
         for linha in linhas:
-          #achei mais facil colocar os atributos assim pra formatar direito no arquivo
             file.write(f"{linha.sigla_tribunal},{linha.procedimento},{linha.ramo_justica},{linha.sigla_grau},{linha.uf_oj},{linha.municipio_oj},{linha.id_ultimo_oj},{linha.nome},{linha.mesano_cnm1},{linha.mesano_sent},{linha.casos_novos_2026},{linha.julgados_2026},{linha.prim_sent2026},{linha.suspensos_2026},{linha.dessobrestados_2026},{linha.cumprimento_meta1},{linha.distm2_a},{linha.julgm2_a},{linha.suspm2_a},{linha.cumprimento_meta2a},{linha.distm2_ant},{linha.julgm2_ant},{linha.suspm2_ant},{linha.desom2_ant},{linha.cumprimento_meta2ant},{linha.distm4_a},{linha.julgm4_a},{linha.suspm4_a},{linha.cumprimento_meta4a},{linha.distm4_b},{linha.julgm4_b},{linha.suspm4_b},{linha.cumprimento_meta4b}\n")
     print("Arquivo escrito com sucesso!")
     return
-#gravar um arquivo com nome inserido pelo usuario
+
 def escrever_municipios(linhas,nome_municipio):
     nome_arquivo = nome_municipio + ".csv"
     with open(nome_arquivo, 'a', encoding='utf-8') as file:
@@ -212,14 +210,14 @@ def metas_resumo_municipio(linhas):
             
             indice_zero = linhas[0].municipio_oj # obtem nome do municipio
             linhas_municipio = [linha for linha in linhas if linha.municipio_oj == indice_zero] # coloca todas as ocorrencias do municipio em outra lista
-            print(indice_zero)
+            #print(indice_zero)
             # formulas com os dados da lista
             sum_julgados_2026 = sum(linha.julgados_2026 for linha in linhas_municipio)
             sum_casos_novos_2026 = sum(linha.casos_novos_2026 for linha in linhas_municipio)
             sum_dessobrestados_2026 = sum(linha.dessobrestados_2026 for linha in linhas_municipio)
             sum_suspensos_2026 = sum(linha.suspensos_2026 for linha in linhas_municipio)
             
-            if (sum_casos_novos_2026 + sum_dessobrestados_2026 - sum_suspensos_2026) == 0: #verificação pra nao dividir por zero
+            if (sum_casos_novos_2026 + sum_dessobrestados_2026 - sum_suspensos_2026) == 0:
                 meta1_var = 0
             else: 
                 meta1_var = sum_julgados_2026/(sum_casos_novos_2026 + sum_dessobrestados_2026 - sum_suspensos_2026) 
@@ -346,19 +344,24 @@ def metas_tribunal_fun(linhas):
     return linhas_temp
 
 def busca_municipio(linhas,nome_municipio):
+    #for i in linhas:
     linhas_municipio = [linha for linha in linhas if linha.municipio_oj == nome_municipio] # coloca todas as ocorrencias do municipio em outra lista
     return linhas_municipio
 
 def resumo_tribunal(linhas):    
-  #organiza a lista pra agrupar os nomes de tribunal
     linhas = sorted(linhas, key=lambda p: p.sigla_tribunal)
-    tribunal_metas = metas_tribunal_fun(linhas) #obtem asmetas por nome de tribunal
-    tribunal_metas = sorted(tribunal_metas, key=lambda x: x.meta1, reverse=True) #coloca a lista em ordem decrescente
+    tribunal_metas = metas_tribunal_fun(linhas)
+    tribunal_metas = sorted(tribunal_metas, key=lambda x: x.meta1, reverse=True)
     
     with open('tribunal_metas.csv', 'a', encoding='utf-8') as file:
         file.write(f"sigla_tribunal,meta1,meta2a,meta2ant,meta4a,meta4b\n")
         for metas_tribunal in tribunal_metas:
             file.write(f"{metas_tribunal.sigla_tribunal},{metas_tribunal.meta1:.2f},{metas_tribunal.meta2a:.2f},{metas_tribunal.meta2ant:.2f},{metas_tribunal.meta4a:.2f},{metas_tribunal.meta4b:.2f}\n")
+
+def resumo_municipio(linhas):
+    nome_municipio = input("Digite o nome de uma cidade: ")
+    linhas = busca_municipio(linhas,nome_municipio)
+    escrever_municipios(linhas,nome_municipio)
 
 # --------------- função principal -------------------
 
@@ -366,20 +369,36 @@ def resumo_tribunal(linhas):
 #print(f"Diretorio atual: {current_dir}, para garantir o funcionamento do programa, certifique-se que existe uma pasta Banco de Dados contendo os arquivos a serem lidos neste diretório!\n")
 linhas = concatenar_arquivos()
 print("1: Concatenar arquivos\n2: Resumo por município\n3: Resumo por tribunal\n4: Buscar município\n")
-op = input("Digite uma opção:")
+op2 = input("Digite uma opção:")
 # -------- menu ----------
-match op:
+match op2:
     case "1":
+        tempo_execucao = time.time()
         escrever_arquivo_inteiro(linhas)
+        tempo_final = time.time()
+        tempo_execucao = tempo_final - tempo_execucao
+        print(f"Tempo de execução: {tempo_execucao} segundos")
     
     case "2":
+        tempo_execucao = time.time()
         metas_resumo_municipio(linhas)
+        tempo_final = time.time()
+        tempo_execucao = tempo_final - tempo_execucao
+        print(f"Tempo de execução: {tempo_execucao} segundos")
 
     case "3":
+        tempo_execucao = time.time()
         resumo_tribunal(linhas)
+        tempo_final = time.time()
+        tempo_execucao = tempo_final - tempo_execucao
+        print(f"Tempo de execução: {tempo_execucao} segundos")
     case "4":
         nome_municipio = input("Digite o nome de uma cidade: ")
+        tempo_execucao = time.time()
         linhas = busca_municipio(linhas,nome_municipio)
         escrever_municipios(linhas,nome_municipio)
+        tempo_final = time.time()
+        tempo_execucao = tempo_final - tempo_execucao
+        print(f"Tempo de execução: {tempo_execucao} segundos")
     case _:
         print("Opção inválida!")
