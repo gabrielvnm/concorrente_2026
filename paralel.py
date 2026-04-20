@@ -1,9 +1,7 @@
-
 import threading
 import os
 import time
 
-#revisar ainda nao ta funfando
 class Linha:
     def __init__(self, sigla_tribunal,procedimento,ramo_justica,sigla_grau,uf_oj,municipio_oj,id_ultimo_oj,nome,mesano_cnm1,mesano_sent,casos_novos_2026,julgados_2026,prim_sent2026,suspensos_2026,dessobrestados_2026,cumprimento_meta1,distm2_a,julgm2_a,suspm2_a,cumprimento_meta2a,distm2_ant,julgm2_ant,suspm2_ant,desom2_ant,cumprimento_meta2ant,distm4_a,julgm4_a,suspm4_a,cumprimento_meta4a,distm4_b,julgm4_b,suspm4_b,cumprimento_meta4b):
         self.sigla_tribunal = sigla_tribunal 
@@ -124,21 +122,13 @@ def abrir_arquivo(nome_arquivo):
                 linhas.append(linha)
 
     return linhas
-# Obter todos os dados e colocar na memoria
-def concatenar_arquivos_paralel(sigla_estado):
-    linhas = []
-    nome_arquivo = sigla_estado + ".csv"
-    linhas_temp = abrir_arquivo(nome_arquivo)
-    linhas.append(linhas_temp)
-    
-    return linhas
 
 # Escrever a lista inteira com todos os dados em um único arquivo
-def escrever_arquivo_inteiro_paralel(lista):
+def escrever_arquivo_inteiro_paralel(linhas):
     with lock:
         with open('lista_completa.csv', 'a', encoding='utf-8') as file:
-            for linha in lista:
-                file.write(f"{linha}")
+            for linha in linhas:
+                file.write(f"{linha.sigla_tribunal},{linha.procedimento},{linha.ramo_justica},{linha.sigla_grau},{linha.uf_oj},{linha.municipio_oj},{linha.id_ultimo_oj},{linha.nome},{linha.mesano_cnm1},{linha.mesano_sent},{linha.casos_novos_2026},{linha.julgados_2026},{linha.prim_sent2026},{linha.suspensos_2026},{linha.dessobrestados_2026},{linha.cumprimento_meta1},{linha.distm2_a},{linha.julgm2_a},{linha.suspm2_a},{linha.cumprimento_meta2a},{linha.distm2_ant},{linha.julgm2_ant},{linha.suspm2_ant},{linha.desom2_ant},{linha.cumprimento_meta2ant},{linha.distm4_a},{linha.julgm4_a},{linha.suspm4_a},{linha.cumprimento_meta4a},{linha.distm4_b},{linha.julgm4_b},{linha.suspm4_b},{linha.cumprimento_meta4b}\n")#f"{linha}")
     print("Arquivo escrito com sucesso!")
     
     return
@@ -174,7 +164,7 @@ def metas_resumo_municipio_paralel(linhas):
             
             indice_zero = linhas[0].municipio_oj # obtem nome do municipio
             linhas_municipio = [linha for linha in linhas if linha.municipio_oj == indice_zero] # coloca todas as ocorrencias do municipio em outra lista
-            print(indice_zero)
+            
             # formulas com os dados da lista
             sum_julgados_2026 = sum(linha.julgados_2026 for linha in linhas_municipio)
             sum_casos_novos_2026 = sum(linha.casos_novos_2026 for linha in linhas_municipio)
@@ -334,50 +324,43 @@ def resumo_municipio(linhas):
 #print(f"Diretorio atual: {current_dir}, para garantir o funcionamento do programa, certifique-se que existe uma pasta Banco de Dados contendo os arquivos a serem lidos neste diretório!\n")
 lock = threading.Lock() # esse lock tem que ser global
 
-#lendo os arquivos com 4 threads paralelas
-sigla_estado = ["Base de Dados/teste_TRE-AC","Base de Dados/teste_TRE-AL",
-                "Base de Dados/teste_TRE-AM","Base de Dados/teste_TRE-AP",
-                "Base de Dados/teste_TRE-BA","Base de Dados/teste_TRE-CE",
-                "Base de Dados/teste_TRE-DF","Base de Dados/teste_TRE-ES",
-                "Base de Dados/teste_TRE-GO","Base de Dados/teste_TRE-MA",
-                "Base de Dados/teste_TRE-MG","Base de Dados/teste_TRE-MS",
-                "Base de Dados/teste_TRE-MT","Base de Dados/teste_TRE-PA",
-                "Base de Dados/teste_TRE-PB","Base de Dados/teste_TRE-PE",
-                "Base de Dados/teste_TRE-PI","Base de Dados/teste_TRE-PR",
-                "Base de Dados/teste_TRE-RJ","Base de Dados/teste_TRE-RN",
-                "Base de Dados/teste_TRE-RO","Base de Dados/teste_TRE-RR",
-                "Base de Dados/teste_TRE-RS","Base de Dados/teste_TRE-SC",
-                "Base de Dados/teste_TRE-SE","Base de Dados/teste_TRE-SP",
-                "Base de Dados/teste_TRE-TO"]
+#lendo os arquivos e colocando em 4 listas
+sigla_estado = ["Base de Dados/teste_TRE-AC.csv","Base de Dados/teste_TRE-AL.csv",
+                "Base de Dados/teste_TRE-AM.csv","Base de Dados/teste_TRE-AP.csv",
+                "Base de Dados/teste_TRE-BA.csv","Base de Dados/teste_TRE-CE.csv",
+                "Base de Dados/teste_TRE-DF.csv","Base de Dados/teste_TRE-ES.csv",
+                "Base de Dados/teste_TRE-GO.csv","Base de Dados/teste_TRE-MA.csv",
+                "Base de Dados/teste_TRE-MG.csv","Base de Dados/teste_TRE-MS.csv",
+                "Base de Dados/teste_TRE-MT.csv","Base de Dados/teste_TRE-PA.csv",
+                "Base de Dados/teste_TRE-PB.csv","Base de Dados/teste_TRE-PE.csv",
+                "Base de Dados/teste_TRE-PI.csv","Base de Dados/teste_TRE-PR.csv",
+                "Base de Dados/teste_TRE-RJ.csv","Base de Dados/teste_TRE-RN.csv",
+                "Base de Dados/teste_TRE-RO.csv","Base de Dados/teste_TRE-RR.csv",
+                "Base de Dados/teste_TRE-RS.csv","Base de Dados/teste_TRE-SC.csv",
+                "Base de Dados/teste_TRE-SE.csv","Base de Dados/teste_TRE-SP.csv",
+                "Base de Dados/teste_TRE-TO.csv"]
+
 lista1 = []
 lista2 = []
 lista3 = []
 lista4 = []
+
 for i in range(0,6):
-    thread1 = threading.Thread(target=concatenar_arquivos_paralel,args=(sigla_estado[i],))
-    thread1.start()
-    thread1.join()
+    lista1 = lista1 + abrir_arquivo(sigla_estado[i])
 for i in range(7,13):
-    thread2 = threading.Thread(target=concatenar_arquivos_paralel,args=(sigla_estado[i],))
-    thread2.start()
-    thread2.join()
+    lista2 = lista2 + abrir_arquivo(sigla_estado[i])
 for i in range(14,20):
-    thread3 = threading.Thread(target=concatenar_arquivos_paralel,args=(sigla_estado[i],))
-    thread3.start()
-    thread3.join()
+    lista3 = lista3 + abrir_arquivo(sigla_estado[i])
 for i in range(21,26):
-    thread4 = threading.Thread(target=concatenar_arquivos_paralel,args=(sigla_estado[i],))
-    thread4.start()
-    thread4.join()
-for linha in lista1:
-    print(linha)
-    print(f"\n")
+    lista4 = lista4 + abrir_arquivo(sigla_estado[i])
+
 
 print("1: Concatenar arquivos\n2: Resumo por município\n3: Resumo por tribunal\n4: Buscar município\n")
 op2 = input("Digite uma opção:")
 # -------- menu ----------
 match op2:
     case "1":
+        tempo_execucao = time.time()
         thread1 = threading.Thread(target=escrever_arquivo_inteiro_paralel,args=(lista1,))
         thread2 = threading.Thread(target=escrever_arquivo_inteiro_paralel,args=(lista2,))
         thread3 = threading.Thread(target=escrever_arquivo_inteiro_paralel,args=(lista3,))
@@ -390,10 +373,13 @@ match op2:
         thread2.join()
         thread3.join()
         thread4.join()
+        tempo_final = time.time()
+        tempo_execucao = tempo_final - tempo_execucao
+        print(f"Tempo de execução: {tempo_execucao} segundos")
+        
 
     case "2":
-        metas_resumo_municipio(lista1)
-        """
+        tempo_execucao = time.time()
         primeira_linha()
         thread1 = threading.Thread(target=metas_resumo_municipio_paralel(lista1))
         thread2 = threading.Thread(target=metas_resumo_municipio_paralel(lista2))
@@ -407,9 +393,13 @@ match op2:
         thread2.join()
         thread3.join()
         thread4.join()
-    """
+        tempo_final = time.time()
+        tempo_execucao = tempo_final - tempo_execucao
+        print(f"Tempo de execução: {tempo_execucao} segundos")
+    
 
     case "3":
+        tempo_execucao = time.time()
         primeira_linha_tribunal()
         thread1 = threading.Thread(target=resumo_tribunal_paralel,args=(lista1,))
         thread2 = threading.Thread(target=resumo_tribunal_paralel,args=(lista2,))
@@ -423,14 +413,18 @@ match op2:
         thread2.join()
         thread3.join()
         thread4.join()
+        tempo_final = time.time()
+        tempo_execucao = tempo_final - tempo_execucao
+        print(f"Tempo de execução: {tempo_execucao} segundos")
 
     case "4":
 
         nome_municipio = input("Digite o nome de uma cidade: ")
-        thread1 = threading.Thread(target=busca_municipio,args=(lista1,))
-        thread2 = threading.Thread(target=busca_municipio,args=(lista2,))
-        thread3 = threading.Thread(target=busca_municipio,args=(lista3,))
-        thread4 = threading.Thread(target=busca_municipio,args=(lista4,))
+        tempo_execucao = time.time()
+        thread1 = threading.Thread(target=busca_municipio,args=(lista1,nome_municipio))
+        thread2 = threading.Thread(target=busca_municipio,args=(lista2,nome_municipio))
+        thread3 = threading.Thread(target=busca_municipio,args=(lista3,nome_municipio))
+        thread4 = threading.Thread(target=busca_municipio,args=(lista4,nome_municipio))
         thread1.start()
         thread2.start()
         thread3.start()
@@ -442,5 +436,8 @@ match op2:
 
         linhas = lista1+lista2+lista3+lista4
         escrever_municipios(linhas,nome_municipio)
+        tempo_final = time.time()
+        tempo_execucao = tempo_final - tempo_execucao
+        print(f"Tempo de execução: {tempo_execucao} segundos")
     case _:
         print("Opção inválida!")  
