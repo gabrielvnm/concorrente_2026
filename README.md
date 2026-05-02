@@ -18,6 +18,14 @@ Este projeto lê arquivos CSV contendo dados processuais de Tribunais Regionais 
 - **Pesquisa por municípios** com nome do município informado pelo usuário
 - **Exportação de resultados** em arquivos CSV
 
+## Passos para execução
+
+Para o correto funcionamento do programa, é necessário que os arquivos a serem lidos estejam numa pasta com o nome Banco de Dados na mesma pasta em que o programa é executado. Ao executar o programa pelo terminal do VS Code, é possível que seja executado a partir de outra pasta, portanto é recomendado a utilização de um terminal padrão do windows ou terminal linux. Navegue entre os diretórios da máquina para garantir que a execução será a partir do diretório correto, e utilize '''python serial.py''' ou '''python paralel.py''' para iniciar a execução.
+
+Em caso de dúvidas sobre o diretório, as duas primeiras linhas comentadas na função principal devem imprimir _current working directory_ ou _cwd_, basta remover o comentário nas linhas 368 e 369 do programa serial.py e 332 333 do programa paralel.py.
+
+Após a finalização da execução de uma das versões do programa, alguns arquivos novos devem ser criados na mesma pasta, dependendo da opção escolhida no menu. É recomendado apagar os arquivos criados ao executar o programa novamente, para evitar que o programa escreva sobre arquivos já existentes.
+
 ## Estrutura e Análise do Projeto 
 
 O projeto foi dividido em duas partes: Dois programas em python, um que executa as funções de maneira sequencial, e o outro de forma paralela. As funcionalidades executadas são as mesmas, e o programa sequencial foi adaptado como base para construção do programa paralelo. No programa paralelo, foi decidido pelo uso de 4 threads simultâneas para fins de verificar o ganho, mas este número poderia ser adaptado caso a eficiência do programa fosse priorizada ao invés da coleta de dados. Além das funções de execução de tarefas, foi também utilizada a biblioteca time para o registro de tempos de execução.
